@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: app
+    command: sh -c "goose -dir migrations up && ./app"
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - bday-notifier
+
+  worker:
+    container_name: worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    init: true
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - bday-notifier
+
+  db:
+    image: postgres
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: bday_notifier
+    networks:
+      - bday-notifier
+
+networks:
+  bday-notifier:
+    external: true

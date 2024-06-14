@@ -1,0 +1,222 @@
+openapi: 3.0.3
+info:
+  title: Birthday Notifier API
+  description: Birthday Notifier API documentation
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: auth
+  - name: subscription
+  - name: users
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: Sign up
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequestBody'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Invalid Request Body
+        '500':
+          description: Internal Server Error
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: Sign in
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequestBody'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Invalid Request Body
+        '500':
+          description: Internal Server Error
+  /api/subscription:
+    post:
+      tags:
+        - subscription
+      summary: Create subscription
+      operationId: createSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequestBody'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid Request Body
+        '404':
+          description: User trying to subscribe to not found
+        '500':
+          description: Internal Server Error
+      security:
+        - bearer_auth: []
+    delete:
+      tags:
+        - subscription
+      summary: Delete subscription
+      operationId: deleteSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteSubscriptionRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid Request Body
+        '404':
+          description: User trying to subscribe to not found
+        '500':
+          description: Internal Server Error
+      security:
+        - bearer_auth: []
+  /api/users:
+    get:
+      tags:
+        - users
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Users not found
+        '500':
+          description: Internal Server Error
+      security:
+        - bearer_auth: []
+  /api/users/subscriptions:
+    get:
+      tags:
+        - users
+      summary: Get users subscribed to
+      operationId: getUsersSubscribedTo
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Subscriptions not found
+        '500':
+          description: Internal Server Error
+      security:
+        - bearer_auth: []
+
+
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 458c370e-12f9-4e8c-9c4b-ca0a123a6151
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        birthday_date:
+          type: string
+          format: date
+    SignUpRequestBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          minLength: 7
+          example: securepassword
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        birthday_date:
+          type: string
+          format: date
+    SignInRequestBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          minLength: 7
+          example: securepassword
+    CreateSubscriptionRequestBody:
+      type: object
+      properties:
+        user_id:
+          description: Id of a user to subscribe to
+          type: string
+          format: uuid
+          example: 458c370e-12f9-4e8c-9c4b-ca0a123a6151
+        notify_before_days:
+          description: How much days before birthday notification should be sent
+          type: integer
+          minimum: 0
+          maximum: 7
+    DeleteSubscriptionRequestBody:
+      type: object
+      properties:
+        user_id:
+          description: Id of a user to unsubscribe of
+          type: string
+          format: uuid
+          example: 458c370e-12f9-4e8c-9c4b-ca0a123a6151
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

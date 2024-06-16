@@ -60,38 +60,32 @@ func (m *mailer) Send(ctx context.Context, wg *sync.WaitGroup, addresses []strin
 	queue <- struct{}{}
 	retriesCount := 0
 
-	for {
-		select {
-		case <-queue:
-			if err := m.sendEmail(addresses, subject, body); err != nil {
-				// requeue send message job when error occurs
-				m.logger.Error("error sending email", slog.String("error", err.Error()))
-				if retriesCount >= m.maxRetriesCount {
-					m.logger.Warn("max retries reached, emails were not sent")
-					return
-				}
-
-				retriesCount++
-				var waitBeforeRetry time.Duration
-				if m.incrementalWait {
-					waitBeforeRetry = m.waitBeforeRetry * time.Duration(retriesCount)
-				} else {
-					waitBeforeRetry = m.waitBeforeRetry
-				}
-
-				m.logger.Info(fmt.Sprintf("retrying in %s", waitBeforeRetry))
-				timer := time.NewTimer(waitBeforeRetry)
-				select {
-				case <-timer.C:
-					queue <- struct{}{}
-				case <-ctx.Done():
-					m.logger.Warn("execution context was closed, exiting")
-					return
-				}
-				continue
-			}
+	for range queue {
+		err := m.sendEmail(addresses, subject, body)
+		if err == nil {
 			m.logger.Info("successfully sent emails", slog.String("subject", subject))
 			return
+		}
+
+		// requeue send message job when error occurs
+		m.logger.Error("error sending email", slog.String("error", err.Error()))
+		if retriesCount >= m.maxRetriesCount {
+			m.logger.Warn("max retries reached, emails were not sent")
+			return
+		}
+		retriesCount++
+
+		var waitBeforeRetry time.Duration
+		if m.incrementalWait {
+			waitBeforeRetry = m.waitBeforeRetry * time.Duration(retriesCount)
+		} else {
+			waitBeforeRetry = m.waitBeforeRetry
+		}
+
+		m.logger.Info(fmt.Sprintf("retrying in %s", waitBeforeRetry))
+		select {
+		case <-time.After(waitBeforeRetry):
+			queue <- struct{}{}
 		case <-ctx.Done():
 			m.logger.Warn("execution context was closed, exiting")
 			return

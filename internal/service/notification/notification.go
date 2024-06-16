@@ -44,7 +44,7 @@ func (s *notificationService) NotifyUsers(ctx context.Context) error {
 	defer func() {
 		err := tx.Commit()
 		if err != nil {
-			s.logger.Error("error committing transaction")
+			s.logger.Error("error committing transaction", slog.String("error", err.Error()))
 		}
 	}()
 

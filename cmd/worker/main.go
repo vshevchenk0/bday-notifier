@@ -39,13 +39,17 @@ func main() {
 
 	doneChan := make(chan struct{}, 1)
 	ctx, cancel := context.WithCancel(context.Background())
-	if err := w.Run(ctx, doneChan); err != nil {
-		return
-	}
+	go func() {
+		if err := w.Run(ctx, doneChan); err != nil {
+			return
+		}
+	}()
 
 	select {
 	case <-shutdownChan:
 		cancel()
+		<-doneChan
+		return
 	case <-doneChan:
 		return
 	}

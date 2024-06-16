@@ -1,3 +1,3 @@
 # &>/proc/1/fd/1 -> logging to process PID1 stdout/stderr in docker
 # every day at 09:00
-05 15 * * * /worker/worker &>/proc/1/fd/1
+0 9 * * * /worker/worker &>/proc/1/fd/1

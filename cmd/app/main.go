@@ -9,9 +9,9 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/vshevchenk0/bday-greeter/internal/app"
-	"github.com/vshevchenk0/bday-greeter/internal/config"
-	"github.com/vshevchenk0/bday-greeter/pkg/postgresql"
+	"github.com/vshevchenk0/bday-notifier/internal/app"
+	"github.com/vshevchenk0/bday-notifier/internal/config"
+	"github.com/vshevchenk0/bday-notifier/pkg/postgresql"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vshevchenk0/bday-greeter/internal/config"
+	"github.com/vshevchenk0/bday-notifier/internal/config"
 )
 
 type Worker struct {

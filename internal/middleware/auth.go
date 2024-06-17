@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/vshevchenk0/bday-greeter/internal/service"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
 )
 
 const UserIdKey key = "userId"

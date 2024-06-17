@@ -1,4 +1,4 @@
-module github.com/vshevchenk0/bday-greeter
+module github.com/vshevchenk0/bday-notifier
 
 go 1.21.6
 

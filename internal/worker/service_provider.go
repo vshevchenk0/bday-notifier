@@ -4,13 +4,13 @@ import (
 	"log/slog"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vshevchenk0/bday-greeter/internal/config"
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
-	notificationRepository "github.com/vshevchenk0/bday-greeter/internal/repository/notification"
-	"github.com/vshevchenk0/bday-greeter/internal/service"
-	notificationService "github.com/vshevchenk0/bday-greeter/internal/service/notification"
-	"github.com/vshevchenk0/bday-greeter/pkg/logger"
-	"github.com/vshevchenk0/bday-greeter/pkg/mailer"
+	"github.com/vshevchenk0/bday-notifier/internal/config"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
+	notificationRepository "github.com/vshevchenk0/bday-notifier/internal/repository/notification"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
+	notificationService "github.com/vshevchenk0/bday-notifier/internal/service/notification"
+	"github.com/vshevchenk0/bday-notifier/pkg/logger"
+	"github.com/vshevchenk0/bday-notifier/pkg/mailer"
 )
 
 type serviceProvider struct {

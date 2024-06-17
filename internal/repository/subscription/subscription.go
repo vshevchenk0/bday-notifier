@@ -6,7 +6,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
 )
 
 type subscriptionRepository struct {

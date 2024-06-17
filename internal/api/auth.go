@@ -10,8 +10,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-playground/validator/v10"
-	"github.com/vshevchenk0/bday-greeter/internal/service"
-	"github.com/vshevchenk0/bday-greeter/pkg/validatorext"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
+	"github.com/vshevchenk0/bday-notifier/pkg/validatorext"
 )
 
 type AuthHandler struct {

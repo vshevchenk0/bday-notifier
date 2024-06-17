@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
-	"github.com/vshevchenk0/bday-greeter/internal/service"
-	"github.com/vshevchenk0/bday-greeter/pkg/jwt"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
+	"github.com/vshevchenk0/bday-notifier/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 

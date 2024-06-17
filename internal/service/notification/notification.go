@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
-	"github.com/vshevchenk0/bday-greeter/pkg/mailer"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
+	"github.com/vshevchenk0/bday-notifier/pkg/mailer"
 )
 
 type notificationService struct {

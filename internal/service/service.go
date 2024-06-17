@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/vshevchenk0/bday-greeter/internal/model"
+	"github.com/vshevchenk0/bday-notifier/internal/model"
 )
 
 var (

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vshevchenk0/bday-greeter/internal/model"
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
+	"github.com/vshevchenk0/bday-notifier/internal/model"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
 )
 
 type notificationRepository struct {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/vshevchenk0/bday-greeter/pkg/validatorext"
+	"github.com/vshevchenk0/bday-notifier/pkg/validatorext"
 )
 
 type ErrorResponse struct {

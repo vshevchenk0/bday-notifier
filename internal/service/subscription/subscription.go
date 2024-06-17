@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/vshevchenk0/bday-greeter/internal/repository"
-	"github.com/vshevchenk0/bday-greeter/internal/service"
+	"github.com/vshevchenk0/bday-notifier/internal/repository"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
 )
 
 type subscriptionService struct {

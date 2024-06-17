@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/vshevchenk0/bday-greeter/internal/middleware"
-	"github.com/vshevchenk0/bday-greeter/internal/service"
+	"github.com/vshevchenk0/bday-notifier/internal/middleware"
+	"github.com/vshevchenk0/bday-notifier/internal/service"
 )
 
 type UserHandler struct {

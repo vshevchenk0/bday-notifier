@@ -8,9 +8,9 @@ import (
 	"syscall"
 
 	_ "github.com/lib/pq"
-	"github.com/vshevchenk0/bday-greeter/internal/config"
-	"github.com/vshevchenk0/bday-greeter/internal/worker"
-	"github.com/vshevchenk0/bday-greeter/pkg/postgresql"
+	"github.com/vshevchenk0/bday-notifier/internal/config"
+	"github.com/vshevchenk0/bday-notifier/internal/worker"
+	"github.com/vshevchenk0/bday-notifier/pkg/postgresql"
 )
 
 func main() {

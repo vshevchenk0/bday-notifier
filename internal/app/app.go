@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/vshevchenk0/bday-greeter/internal/config"
-	"github.com/vshevchenk0/bday-greeter/internal/server"
+	"github.com/vshevchenk0/bday-notifier/internal/config"
+	"github.com/vshevchenk0/bday-notifier/internal/server"
 )
 
 type App struct {

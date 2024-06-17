@@ -4,25 +4,27 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-playground/validator/v10"
 	"github.com/vshevchenk0/bday-greeter/internal/service"
+	"github.com/vshevchenk0/bday-greeter/pkg/validatorext"
 )
 
 type AuthHandler struct {
 	authService service.AuthService
-	validator   *validator.Validate
+	validate    *validator.Validate
 	router      chi.Router
 }
 
 type signUpRequestBody struct {
 	Email        string `json:"email" validate:"required,email"`
 	Password     string `json:"password" validate:"required,min=7"`
-	Name         string `json:"name" validate:"required"`
-	Surname      string `json:"surname" validate:"required"`
+	Name         string `json:"name" validate:"required,min=1"`
+	Surname      string `json:"surname" validate:"required,min=1"`
 	BirthdayDate string `json:"birthday_date" validate:"required"`
 }
 
@@ -34,7 +36,7 @@ type signInRequestBody struct {
 func NewAuthHandler(authService service.AuthService) *AuthHandler {
 	handler := &AuthHandler{
 		authService: authService,
-		validator:   validator.New(validator.WithRequiredStructEnabled()),
+		validate:    validatorext.NewValidator(),
 		router:      chi.NewRouter(),
 	}
 	handler.initRoutes()
@@ -44,11 +46,19 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 func (h *AuthHandler) signUp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	var body signUpRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		WriteErrorResponse(w, http.StatusBadRequest, err)
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if errors.Is(err, io.EOF) {
+		errText := fmt.Errorf("body is required")
+		WriteErrorResponse(w, http.StatusBadRequest, errText)
 		return
 	}
-	err := h.validator.Struct(body)
+	if err != nil {
+		errText := fmt.Errorf("failed to decode request body")
+		WriteErrorResponse(w, http.StatusInternalServerError, errText)
+		return
+	}
+
+	err = h.validate.Struct(body)
 	if _, ok := err.(*validator.InvalidValidationError); ok {
 		WriteErrorResponse(w, http.StatusBadRequest, err)
 		return
@@ -89,11 +99,19 @@ func (h *AuthHandler) signUp(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) signIn(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	var body signInRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		WriteErrorResponse(w, http.StatusBadRequest, err)
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if errors.Is(err, io.EOF) {
+		errText := fmt.Errorf("body is required")
+		WriteErrorResponse(w, http.StatusBadRequest, errText)
 		return
 	}
-	err := h.validator.Struct(body)
+	if err != nil {
+		errText := fmt.Errorf("failed to decode request body")
+		WriteErrorResponse(w, http.StatusInternalServerError, errText)
+		return
+	}
+
+	err = h.validate.Struct(body)
 	if _, ok := err.(*validator.InvalidValidationError); ok {
 		WriteErrorResponse(w, http.StatusBadRequest, err)
 		return

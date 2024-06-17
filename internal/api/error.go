@@ -5,19 +5,15 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/vshevchenk0/bday-greeter/pkg/validatorext"
 )
 
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
-type ValidationError struct {
-	Field string `json:"field"`
-	Error string `json:"error"`
-}
-
 type ValidationErrorResponse struct {
-	Errors []ValidationError `json:"errors"`
+	Errors []validatorext.FormattedError `json:"errors"`
 }
 
 func WriteErrorResponse(w http.ResponseWriter, statusCode int, error error) {
@@ -33,10 +29,8 @@ func WriteErrorResponse(w http.ResponseWriter, statusCode int, error error) {
 }
 
 func WriteValidationErrorResponse(w http.ResponseWriter, statusCode int, errors validator.ValidationErrors) {
-	response := make([]ValidationError, len(errors))
-	for idx, err := range errors {
-		response[idx] = ValidationError{Field: err.Field(), Error: err.Error()}
-	}
+	formattedErrors := validatorext.FormatErrors(errors)
+	response := ValidationErrorResponse{Errors: formattedErrors}
 	responseBytes, err := json.Marshal(response)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

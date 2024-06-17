@@ -4,28 +4,30 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-playground/validator/v10"
 	"github.com/vshevchenk0/bday-greeter/internal/middleware"
 	"github.com/vshevchenk0/bday-greeter/internal/service"
+	"github.com/vshevchenk0/bday-greeter/pkg/validatorext"
 )
 
 type SubscriptionHandler struct {
 	subscriptionService service.SubscriptionService
 	authMiddleware      middleware.AuthMiddleware
-	validator           *validator.Validate
+	validate            *validator.Validate
 	router              chi.Router
 }
 
 type createSubscriptionRequestBody struct {
-	UserId           string `json:"user_id" validate:"uuid4,required"`
-	NotifyBeforeDays int    `json:"notify_before_days" validate:"min=0,max=7,required"`
+	UserId           string `json:"user_id" validate:"required,uuid4"`
+	NotifyBeforeDays int    `json:"notify_before_days" validate:"required,min=1,max=7"`
 }
 
 type deleteSubscriptionRequestBody struct {
-	UserId string `json:"user_id" validate:"uuid4,required"`
+	UserId string `json:"user_id" validate:"required,uuid4"`
 }
 
 func NewSubscriptionHandler(
@@ -35,7 +37,7 @@ func NewSubscriptionHandler(
 	handler := &SubscriptionHandler{
 		subscriptionService: subscriptionService,
 		authMiddleware:      authMiddleware,
-		validator:           validator.New(validator.WithRequiredStructEnabled()),
+		validate:            validatorext.NewValidator(),
 		router:              chi.NewRouter(),
 	}
 	handler.initRoutes()
@@ -45,11 +47,19 @@ func NewSubscriptionHandler(
 func (h *SubscriptionHandler) createSubscription(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	var body createSubscriptionRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		WriteErrorResponse(w, http.StatusBadRequest, err)
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if errors.Is(err, io.EOF) {
+		errText := fmt.Errorf("body is required")
+		WriteErrorResponse(w, http.StatusBadRequest, errText)
 		return
 	}
-	err := h.validator.Struct(body)
+	if err != nil {
+		errText := fmt.Errorf("failed to decode request body")
+		WriteErrorResponse(w, http.StatusInternalServerError, errText)
+		return
+	}
+
+	err = h.validate.Struct(body)
 	if _, ok := err.(*validator.InvalidValidationError); ok {
 		WriteErrorResponse(w, http.StatusBadRequest, err)
 		return
@@ -84,11 +94,19 @@ func (h *SubscriptionHandler) createSubscription(w http.ResponseWriter, r *http.
 func (h *SubscriptionHandler) deleteSubscription(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	var body deleteSubscriptionRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		WriteErrorResponse(w, http.StatusBadRequest, err)
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if errors.Is(err, io.EOF) {
+		errText := fmt.Errorf("body is required")
+		WriteErrorResponse(w, http.StatusBadRequest, errText)
 		return
 	}
-	err := h.validator.Struct(body)
+	if err != nil {
+		errText := fmt.Errorf("failed to decode request body")
+		WriteErrorResponse(w, http.StatusInternalServerError, errText)
+		return
+	}
+
+	err = h.validate.Struct(body)
 	if _, ok := err.(*validator.InvalidValidationError); ok {
 		WriteErrorResponse(w, http.StatusBadRequest, err)
 		return
